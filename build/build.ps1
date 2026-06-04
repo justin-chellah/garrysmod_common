@@ -15,7 +15,7 @@ Invoke-Call { & "$PREMAKE5" "$COMPILER_PLATFORM" } -ErrorAction Stop
 Pop-Location
 
 $module_solution = "$MODULE_NAME.slnx"
-if ((Get-Item "$REPOSITORY_DIR/projects/$PROJECT_OS/$COMPILER_PLATFORM/$module_solution" -ErrorAction SilentlyContinue) -is [System.IO.FileInfo]) {
+if ((Get-Item "$REPOSITORY_DIR/projects/$PROJECT_OS/$COMPILER_PLATFORM/$module_solution" -ErrorAction SilentlyContinue) -isnot [System.IO.FileInfo]) {
 	Write-Output "Using old Visual Studio solution format..."
 	$module_solution = "$MODULE_NAME.sln"
 }
