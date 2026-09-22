@@ -61,7 +61,7 @@ function CreateWorkspace(config)
 		language("C++")
 		location(_workspace.directory)
 		warnings("Extra")
-		flags({"MultiProcessorCompile", "ShadowedVariables", "UndefinedIdentifiers"})
+		multiprocessorcompile("On")
 		characterset("MBCS")
 		intrinsics("On")
 		inlining("Auto")
@@ -130,6 +130,7 @@ function CreateWorkspace(config)
 			pic("On")
 			staticruntime("On")
 			defaultplatform("x86")
+			buildoptions({"-Wshadow", "-Wundef"})
 			linkoptions("-Wl,--no-undefined")
 
 		filter("system:macosx")
@@ -138,7 +139,7 @@ function CreateWorkspace(config)
 			pic("On")
 			staticruntime("Off")
 			defaultplatform("x86_64")
-			buildoptions({"-mmacosx-version-min=10.7", "-stdlib=libc++"})
+			buildoptions({"-mmacosx-version-min=10.7", "-stdlib=libc++", "-Wshadow", "-Wundef"})
 			linkoptions({"-mmacosx-version-min=10.7", "-stdlib=libc++"})
 
 			local macosx_sdkroot = _OPTIONS["macosx_sdkroot"]
@@ -326,7 +327,7 @@ function CreateProject(config)
 				pchsource(config.pch_source)
 			end
 		else
-			flags("NoPCH")
+			enablepch("Off")
 		end
 
 		kind("SharedLib")

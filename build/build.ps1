@@ -14,16 +14,22 @@ Write-Output "Running premake5..."
 Invoke-Call { & "$PREMAKE5" "$COMPILER_PLATFORM" } -ErrorAction Stop
 Pop-Location
 
+$module_solution = "$MODULE_NAME.slnx"
+if ((Get-Item "$REPOSITORY_DIR/projects/$PROJECT_OS/$COMPILER_PLATFORM/$module_solution" -ErrorAction SilentlyContinue) -isnot [System.IO.FileInfo]) {
+	Write-Output "Using old Visual Studio solution format..."
+	$module_solution = "$MODULE_NAME.sln"
+}
+
 if (ValueIsFalsy $DISABLE_32BIT) {
 	Push-Location "$REPOSITORY_DIR/projects/$PROJECT_OS/$COMPILER_PLATFORM" -ErrorAction Stop
 	Write-Output "Building x86 module..."
-	Invoke-Call { & "$MSBuild" "$MODULE_NAME.sln" /p:Configuration=Release /p:Platform=Win32 /m } -ErrorAction Stop
+	Invoke-Call { & "$MSBuild" "$module_solution" /p:Configuration=Release /p:Platform=Win32 /m } -ErrorAction Stop
 	Pop-Location
 }
 
-if (ValueIsFalsy $DISABLE_64BIT -and $PROJECT_GENERATOR_VERSION -ge 3) {
+if ((ValueIsFalsy $DISABLE_64BIT) -and ($PROJECT_GENERATOR_VERSION -ge 3)) {
 	Push-Location "$REPOSITORY_DIR/projects/$PROJECT_OS/$COMPILER_PLATFORM" -ErrorAction Stop
 	Write-Output "Building x86-64 module..."
-	Invoke-Call { & "$MSBuild" "$MODULE_NAME.sln" /p:Configuration=Release /p:Platform=x64 /m } -ErrorAction Stop
+	Invoke-Call { & "$MSBuild" "$module_solution" /p:Configuration=Release /p:Platform=x64 /m } -ErrorAction Stop
 	Pop-Location
 }
